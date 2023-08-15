@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chart</title>
+    </head>
+    <body>
+        <main>
+            <section class="chart-section">
+                <div class="result-summary">
+                    <p>Total Questions: <%= selectedOptionIds.length %></p>
+                    <p>Correct Answers: <%= score %></p>
+                    <p>Wrong Answers: <%= selectedOptionIds.length - score %></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <a href="/course/<%= courseId %>">Back to Levels</a>
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Quiz</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Dosis:wght@200&family=Zeyada&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            body {
+                background: white;
+                font-family: "Dosis", sans-serif;
+                color: black;
+            }
+            label {
+                border: 1px solid black;
+                display: block;
+                font-weight: bold;
+                margin: 10px;
+                font-size: 22px;
+            }
+            legend {
+                font-size: 25px;
+                font-weight: bold;
+                background-color: darkorange;
+            }
+
+            fieldset {
+                margin-top: 20px;
+                background-color: darkorange;
+                padding: 30px;
+            }
+
+            .submit-btn {
+                height: 4em;
+                width: 130px;
+                padding: 1.5em auto;
+                margin: 1em auto;
+                background-color: black;
+                border: none;
+                border-radius: 3px;
+                color: white;
+                text-transform: uppercase;
+                letter-spacing: 0.5em;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+            }
+            
+
+        </style>
+    </head>
+    <body>
+        <main>
+            <h1>
+                Course: <%= dbquestions[0].course_name %> 
+                <br>
+                Level: <%= level %> 
+            </h1>
+            <form action="/submitmyquiz/<%= courseId %>" method="post">
+                <% dbquestions.forEach(question => { %>
+                    <fieldset>
+                        <legend><%= question.question_text %></legend>
+                        <% dboptions.forEach(option => { %>
+                            <% if (option.question_id === question.question_id) { %>
+                                <label for="<%= option.option_id %>"><input type="radio" required id="<%= option.option_id %>" name="<%= option.question_id %>" value="<%= option.option_id %>"> <%= option.option_text %></label>
+                            <% }; %>
+                        <% }); %>
+                    </fieldset>
+                <% }); %>
+                <input type="submit" class="submit-btn" value="Submit">
+                <a href="/course/<%= courseId %>">Back to Levels</a>
+            </form>
+        </main>
+    </body>
+</html>
