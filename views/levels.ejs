@@ -399,27 +399,23 @@ a:active {
       </div>
     </header>
     <section>
-      <h1><%= levels.course_name %> Levels</h1>
+      <h1><%= levels[0].course_name %> Levels</h1>
       <div class="levels-container">
         <% for (const index in levels) { %>
           <% const level = levels[index]; %>
           <div class="card">
             <h2>Level <%= parseInt(index) + 1 %></h2>
             <p class="p-course"><%= level.level_description %></p>
-            <% if (level.level_id === 1) { %>
+            <% if ((parseInt(index) + 1) <= (userdata[0].level)) { %>
               <a href="/courses/<%= level.course_id %>/levels/<%= level.level_id %>/quiz" class="start-quiz-button">
                 <i class="fas fa-unlock"></i> 
                 Start Quiz
               </a>
             <% } else { %>
-              <a href="/courses/<%= level.course_id %>/levels/<%= level.level_id %>/quiz" class="start-quiz-button">
-                <i class="fas fa-unlock"></i> 
-                Start Quiz
-              </a>
-              <!-- <span class="start-quiz-button inactive">
+              <span class="start-quiz-button inactive">
                 <i class="fas fa-lock"></i> 
                 Locked
-              </span> -->
+              </span>
             <% } %>
           </div>
         <% } %>

@@ -194,7 +194,18 @@ app.get("/courses/:courseId/levels", (req, res) => {
             console.error("Error fetching levels:", err)
             return res.status(500).send("Error fetching levels")
         }
-        res.render("levels.ejs", { levels: levelsResult })
+        const userDataQuery = 'SELECT level FROM users WHERE u_id = ?'
+        connection.query(
+            userDataQuery,
+            [req.session.userID],
+            (err, userdata) => {
+                if (err) {
+                    console.error("Error fetching user data:", err)
+                    return res.status(500).send("Error fetching user data")
+                }
+                res.render("levels.ejs", { levels: levelsResult, userdata: userdata })
+            }
+        )
     })
 })
 
@@ -203,6 +214,7 @@ app.get("/courses/:courseId/levels", (req, res) => {
 app.get("/course/:courseId", (req, res) => {
     const courseId = req.params.courseId
     // Redirect to the levels page for the specific course
+    console.log(req.session.userID)
     res.redirect(`/courses/${courseId}/levels`)
 })
 
@@ -238,17 +250,53 @@ app.get("/courses/:courseId/levels/:levelId/quiz", (req, res) => {
 
 app.post("/submitmyquiz/:courseId", (req, res) => {
     const selectedOptionIds = Object.values(req.body)
-    const scoreQuery = `SELECT SUM(CASE WHEN o.correctness = 'correct' THEN 1 ELSE 0 END) AS score FROM options o WHERE o.option_id IN (?)`
+    const scoreQuery = `
+        SELECT SUM(CASE WHEN o.correctness = 'correct' THEN 1 ELSE 0 END) AS score
+        FROM options o
+        WHERE o.option_id IN (?)`
+    
     connection.query(scoreQuery, [selectedOptionIds], (err, result) => {
         if (err) {
             console.error("Error calculating score:", err)
             return res.status(500).send("Error calculating score")
         }
-        const score = result[0].score 
+
+        const newScore = result[0].score
+
         const courseId = req.params.courseId
-        res.render("chart.ejs", { courseId: courseId, score: score, selectedOptionIds: selectedOptionIds }) 
+
+        const getscore = 'SELECT score, level FROM users WHERE u_id = ?'
+        connection.query(getscore, [req.session.userID], (err, userData) => {
+            if (err) {
+                console.error("Error fetching user data:", err)
+                return res.status(500).send("Error fetching user data")
+            }
+
+            const currentScore = userData[0].score
+            const currentLevel = userData[0].level
+
+            const updatedScore = currentScore + newScore
+
+            let newLevel = (updatedScore < 8) ? 1 : (updatedScore < 16) ? 2 : (updatedScore < 24) ? 3 : 4
+
+
+            const updateUserDataQuery = `
+                UPDATE users
+                SET score = ?, level = ?
+                WHERE u_id = ?`
+
+            connection.query(updateUserDataQuery, [updatedScore, newLevel, req.session.userID], (err, updated) => {
+                if (err) {
+                    console.error("Error updating user data:", err)
+                    return res.status(500).send("Error updating user data")
+                }
+                res.render("chart.ejs", { courseId: courseId, score: newScore, selectedOptionIds: selectedOptionIds })
+            })
+        })
     })
 })
+
+
 
 app.get("/logout", (req, res) => {
     // Destroy the session and redirect to the home page
