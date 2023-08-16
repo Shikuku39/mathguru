@@ -10,7 +10,7 @@ const path = require("path")
 const { error } = require("console")
 
 app.use(express.json())
-app.use(express.urlencoded({ extended: false })) // req.body
+app.use(express.urlencoded({ extended: false }))
 app.use(express.static("public"))
 app.set("views", path.join(__dirname, "views"))
 app.set("view engine", "ejs")
@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 })
 
 function loginRequired(req, res) {
-    res.locals.isLogedIn || res.redirect('/login');
+    res.locals.isLogedIn || res.redirect('/login')
 }
 
 app.get("/", (req, res) => {
@@ -65,9 +65,6 @@ app.get("/register", (req, res) => {
 })
 
 app.post("/register", (req, res) => {
-    // Check if email already exists
-    // Encrypt the password
-    // Save data to db
     connection.query(
         "SELECT email FROM users WHERE email = ?",
         [req.body.email],
@@ -165,7 +162,7 @@ app.post("/login", (req, res) => {
 app.get("/courses", (req, res) => {
     loginRequired(req, res)
     // Fetch courses/programs data from your database
-    const query = "SELECT * FROM courses" // Assuming the table name is "Courses"
+    const query = "SELECT * FROM courses"
     connection.query(query, (err, result) => {
         if (err) {
             console.error("Error fetching courses:", err)
