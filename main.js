@@ -38,16 +38,15 @@ app.use(session({
     resave: true
 }))
 
-
-
-
-
 // continue to check if user is loged in
 app.use((req, res, next) => {
     res.locals.isLogedIn = (req.session.userID !== undefined)
     next()
 })
 
+function loginRequired(req, res) {
+    res.locals.isLogedIn || res.redirect('/login');
+}
 
 app.get("/", (req, res) => {
     res.render("index.ejs")
@@ -164,6 +163,7 @@ app.post("/login", (req, res) => {
 })
 
 app.get("/courses", (req, res) => {
+    loginRequired(req, res)
     // Fetch courses/programs data from your database
     const query = "SELECT * FROM courses" // Assuming the table name is "Courses"
     connection.query(query, (err, result) => {
@@ -174,11 +174,12 @@ app.get("/courses", (req, res) => {
         const courses = result
         console.log("Courses:", courses) 
         res.render("courses.ejs", { courses })
-    }) 
+    })
 })
 
 // Route to handle course card click and redirect to levels page
 app.get("/courses/:courseId", (req, res) => {
+    loginRequired(req, res)
     const courseId = req.params.courseId
     // Redirect to the levels page for the specific course
     res.redirect(`/courses/${courseId}/levels`)
@@ -186,6 +187,7 @@ app.get("/courses/:courseId", (req, res) => {
 
 // Route to render the levels page for a specific course
 app.get("/courses/:courseId/levels", (req, res) => {
+    loginRequired(req, res)
     const courseId = req.params.courseId
     // Fetch levels data for the specific course from the database based on courseId
     const levelsQuery = "SELECT levels.level_id, levels.level_description, courses.course_id, courses.course_name FROM levels JOIN courses ON levels.course_id = courses.course_id WHERE courses.course_id = ?"
@@ -212,6 +214,7 @@ app.get("/courses/:courseId/levels", (req, res) => {
 
 // Route to handle course card click and redirect to levels page
 app.get("/course/:courseId", (req, res) => {
+    loginRequired(req, res)
     const courseId = req.params.courseId
     // Redirect to the levels page for the specific course
     console.log(req.session.userID)
@@ -219,6 +222,7 @@ app.get("/course/:courseId", (req, res) => {
 })
 
 app.get("/courses/:courseId/levels/:levelId/quiz", (req, res) => {
+    loginRequired(req, res)
     const quizQuery = 'SELECT q.question_id, q.question_text, c.course_name FROM questions q JOIN courses c ON q.course_id = c.course_id WHERE q.course_id = ?'
     connection.query(
         quizQuery,
@@ -249,6 +253,7 @@ app.get("/courses/:courseId/levels/:levelId/quiz", (req, res) => {
 })
 
 app.post("/submitmyquiz/:courseId", (req, res) => {
+    loginRequired(req, res)
     const selectedOptionIds = Object.values(req.body)
     const scoreQuery = `
         SELECT SUM(CASE WHEN o.correctness = 'correct' THEN 1 ELSE 0 END) AS score
@@ -299,6 +304,7 @@ app.post("/submitmyquiz/:courseId", (req, res) => {
 
 
 app.get("/logout", (req, res) => {
+    loginRequired(req, res)
     // Destroy the session and redirect to the home page
     req.session.destroy((err) => {
         if (err) {
