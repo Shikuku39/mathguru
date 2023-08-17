@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>chatroom</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200&family=Zeyada&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/24b7b4270b.js" crossorigin="anonymous"></script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                background-color: #f2f2f2;
+                font-family: Arial, sans-serif;
+            }
+
+            header {
+                background-color: #ffffff;
+                border-bottom: 1px solid #e0e0e0;
+                padding: 20px 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+            }
+
+            .logo-image {
+                max-width: 50px;
+                height: auto;
+                margin-right: 10px;
+            }
+
+            .logo-text {
+                font-size: 24px;
+                color: #333333;
+            }
+
+            .bars ul {
+                list-style: none;
+                display: flex;
+            }
+
+            .bars li {
+                margin-right: 20px;
+            }
+
+            .nav__pointer {
+                text-decoration: none;
+                color: #050505;
+                display: flex;
+                align-items: center;
+            }
+
+            #chatroom {
+                min-height: 70vh;
+                padding: 20px;
+            }
+
+            .chatMain {
+                margin: 20px 0;
+                display: flex;
+                align-items: flex-start;
+            }
+
+            .userInfo {
+                margin-right: 20px;
+            }
+
+            .nameId, .time {
+                color: #777777;
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+
+            .message {
+                background-color: #ffffff;
+                padding: 10px;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .messages {
+                color: #333333;
+            }
+
+            /* Style the footer */
+            #footer {
+                background-color: #333333;
+                color: #ffffff;
+                padding: 20px;
+            }
+
+            #utility-links {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 20px;
+            }
+
+            .left {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+
+            .help ul, .about ul, .card-f ul {
+                list-style: none;
+            }
+
+            .rectangle {
+                width: 1px;
+                background-color: #666666;
+                height: 80px;
+                margin: 0 20px;
+            }
+
+            #social img {
+                margin-right: 10px;
+            }
+
+            .rectangle-horiz {
+                width: 100%;
+                height: 1px;
+                background-color: #666666;
+                margin: 20px 0;
+            }
+
+            .copy {
+                font-size: 14px;
+                margin-top: 10px;
+            }
+
+            @media (max-width: 768px) {
+                .bars {
+                    display: none;
+                }
+
+                .logo-text {
+                    font-size: 20px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="logo">
+                <img class="logo-image" src="/Images/logarithm.png" alt="image" />
+                <h1 class="logo-text">MathGuru</h1>
+            </div>
+            <div class="bars">
+                <ul class="container">
+                    <li>
+                        <a href="/courses" class="nav__pointer"><i class="fa-solid fa-credit-card" style="color: #030303;"></i><span>courses</span></a>
+                    </li>
+                    <li>
+                        <a href="" class="nav__pointer breadcrumbs__pointer--first"><i class="fa-solid fa-user" style="color: #050505"></i><span>Profile</span></a>
+                    </li>
+                    <li>
+                        <a href="/faq" class="nav__pointer"><i class="fa-solid fa-circle-info" style="color: #050505"></i><span>Help</span></a>
+                    </li>
+                    <li>
+                        <a href="/logout" class="nav__pointer nav__pointer--last nav__pointer--current"><i class="fas fa-sign-out-alt" style="color: #070808"></i><span>Log-out</span></a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <main id="chatroom" class="container">
+            <div class="chats">
+                <% results.forEach(result => { %>
+                    <div class="chatMain">
+                        <div class="userInfo">
+                            <p class="nameId uiTitle"><%= result.username.split(' ')[0] %></p>
+                            <p class="nameId uiTitle">Level: <%= result.level %></p>
+                            <p class="time uiTitle"><%= result.timestamp.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" }) %></p>
+                        </div>
+                        <div class="message">
+                            <p class="messages"><%= result.message %></p>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+            <form action="/sendmessage" method="post" id="form">
+                <input type="text" name="message" id="" required>
+                <input type="submit" value="Send message">
+            </form>
+        </main>
+        <footer id="footer">
+            <div id="utility-links">
+                <div class="help">
+                    <ul>
+                    <h3 class="left">About Us</h3>
+                    <p>MathGuru: Your trusted source for quality math education. Join us and excel in math with confidence!</p>
+                </div>
+                <div class="rectangle"></div>
+                <div class="about">
+                    <ul>
+                        <h3 class="left">Company</h3>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/courses">Courses</a></li>
+                        <li><a href="/faq">FAQs</a></li>
+                        <li><a href="/subscription">Subscriptions</a></li>
+                    </ul>
+                </div>
+                <div class="rectangle"></div>
+                <div class="card-f">
+                    <ul>
+                        <h3 class="left">Products</h3>
+                        <li><a href="#">Programs</a></li>
+                        <li><a href="#">Testimonials</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div id="newsletter-social">      
+                <div id="social">
+                    <a href="#" target="_blank">
+                    <img width="34" height="34" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1024px-Facebook_Logo_%282019%29.png"></a></img>
+                    <a href="#" target="_blank">
+                    <img width="34" height="34" src="https://res.cloudinary.com/cloudinary-account/image/upload/v1469457641/twitter_fu5ejk.svg"></a></img>
+                    <a href="#" target="_blank">
+                    <img width="34" height="34" src="https://res.cloudinary.com/cloudinary-account/image/upload/v1469457641/pinterest_kahh1i.svg"></a></img>
+                    <a href="#" target="_blank">
+                    <img width="34" height="34" src="https://res.cloudinary.com/cloudinary-account/image/upload/v1469457641/youtube_xrntt3.svg"></a></img>
+                    <a href="#" target="_blank">
+                    <img width="34" height="34" src="https://cdn.pixabay.com/photo/2016/08/09/17/52/instagram-1581266_640.jpg"></a></img>
+                </div>  
+            </div>  
+            <div class="rectangle-horiz"></div>
+            <div id="copyright">
+                <ul>
+                    <li class="copy">© 2023 MathGuru All Rights Reserved.</li>
+                    <li class="copy">Privacy Policy | Terms + Conditions </li>
+                </ul>
+            </div> 
+        </footer>
+    </body>
+</html>

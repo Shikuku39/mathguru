@@ -298,7 +298,39 @@ app.post("/submitmyquiz/:courseId", (req, res) => {
     })
 })
 
+app.get("/chatroom", (req, res) => {
+    let query = `SELECT u.level, u.username, u.u_id, c.chatid, c.message, c.timestamp FROM users u JOIN chatroom c ON u.u_id = c.u_id;`;
+    connection.query(query, [], (error, results) => {
+        if (error) {
+            console.error("Error fetching chatroom data:", error);
+            return res.status(500).send("Internal Server Error");
+        }
 
+        res.render('chatroom', {
+            results: results,
+        });
+    });
+});
+
+app.post('/sendmessage', (req, res) => {
+    const userID = req.session.userID;
+    const message = req.body.message;
+
+    connection.query(
+        'INSERT INTO chatroom (u_id, message) VALUES (?, ?)',
+        [
+            userID,
+            message
+        ],
+        (error, results) => {
+            if (error) {
+                console.error("Error inserting message:", error);
+                return res.status(500).send("Internal Server Error");
+            }
+            res.redirect('/chatroom');
+        }
+    );
+});
 
 app.get("/logout", (req, res) => {
     loginRequired(req, res)
